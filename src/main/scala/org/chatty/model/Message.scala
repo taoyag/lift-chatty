@@ -8,6 +8,8 @@ class Message extends LongKeyedMapper[Message] with IdPK {
   def getSingleton = Message
 
   object owner extends MappedLongForeignKey(this, User)
+    with LongMappedForeignMapper[Message, User]
+
   object message extends MappedPoliteString(this, 1024)
 }
 

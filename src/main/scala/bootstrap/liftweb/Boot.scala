@@ -22,13 +22,10 @@ class Boot {
 
     // where to search snippet
     LiftRules.addToPackages("org.chatty")
-    Schemifier.schemify(true, Log.infoF _, User, ToDo)
+    Schemifier.schemify(true, Log.infoF _, User, Message)
 
     // Build SiteMap
     val entries = Menu(Loc("Home", List("index"), "Home")) :: 
-    Menu(Loc("Static", Link(List("static"), true, "/static/index"), "Static Content")) ::
-    Menu(Loc("Test", Link(List("test"), true, "/static/test"), "Test Page")) ::
-    Menu(Loc("Clock", Link(List("clock"), true, "/clock"), "Clock")) ::
     Menu(Loc("Chat", Link(List("chat"), true, "/chat"), "Chat")) ::
     User.sitemap
 

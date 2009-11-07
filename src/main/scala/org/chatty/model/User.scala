@@ -21,7 +21,7 @@ object User extends User with MetaMegaProtoUser[User] {
 /**
  * An O-R mapped "User" class that includes first name, last name, password and we add a "Personal Essay" to it
  */
-class User extends MegaProtoUser[User] {
+class User extends MegaProtoUser[User] with OneToMany[Long, User] {
   def getSingleton = User // what's the "meta" server
 
   // define an additional field for a personal essay
@@ -30,4 +30,7 @@ class User extends MegaProtoUser[User] {
     override def textareaCols = 50
     override def displayName = "Personal Essay"
   }
+
+  object messages extends MappedOneToMany(Message, Message.owner)
+    with Owned[Message]
 }
