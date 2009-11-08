@@ -65,11 +65,19 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.scalatest</groupId>
+      <artifactId>scalatest</artifactId>
+      <version>1.0</version>
+      <scope>test</scope>
+    </dependency>
+    <!--
+    <dependency>
       <groupId>org.scala-tools.testing</groupId>
       <artifactId>specs</artifactId>
       <version>1.6.0</version>
       <scope>test</scope>
     </dependency>
+    -->
     <dependency>
       <groupId>org.mortbay.jetty</groupId>
       <artifactId>jetty</artifactId>
@@ -102,6 +110,16 @@
         </executions>
         <configuration>
           <scalaVersion>${scala.version}</scalaVersion>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <includes>
+            <include>**/*Spec.class</include>
+            <include>**/*Test.class</include>
+          </includes>
         </configuration>
       </plugin>
       <plugin>
@@ -157,6 +175,16 @@
   </build>
   <reporting>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <includes>
+            <include>**/*Spec.class</include>
+            <include>**/*Test.class</include>
+          </includes>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.scala-tools</groupId>
         <artifactId>maven-scala-plugin</artifactId>
