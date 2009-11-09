@@ -7,7 +7,7 @@ import net.liftweb.util._
 import org.junit.runner.RunWith
 
 import org.chatty.model.User
-import org.chatty.snippet.Chat
+import org.chatty.snippet._
 
 import org.scalatest.FlatSpec
 import org.scalatest.junit.JUnitRunner
