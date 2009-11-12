@@ -1,0 +1,24 @@
+<lift:surround with="default" at="content">
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Member Only</th>
+        <th>View</th>
+        <th>Edit</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      <lift:roomSnippet.list>
+      <tr>
+        <td><room:name/></td>
+        <td><room:memberOnly/></td>
+        <td><a room:view_href="">View</a></td>
+        <td><a room:edit_href="">Edit</a></td>
+        <td><a room:delete_href="">Delete</a></td>
+      </tr>
+      </lift:roomSnippet.list>
+    </tbody>
+  </table>
+</lift:surround>

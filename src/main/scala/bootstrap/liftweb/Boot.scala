@@ -25,12 +25,21 @@ class Boot {
     Schemifier.schemify(true, Log.infoF _, User, Room, Member, Message)
 
     // Build SiteMap
+    /*
     val entries = Menu(Loc("Home", List("index"), "Home")) :: 
     Menu(Loc("Chat", Link(List("chat"), true, "/chat"), "Chat")) ::
     User.sitemap
 
     LiftRules.setSiteMap(SiteMap(entries:_*))
+    */
+    LiftRules.setSiteMap(SiteMap(MenuInfo.menu :_*))
 
+    LiftRules.rewrite.append {
+      case RewriteRequest(ParsePath(List("room", "view", id), _, _, _), _, _) =>
+        RewriteResponse("room" :: "view" :: Nil, Map("id" -> id))
+      case RewriteRequest(ParsePath(List("room", "edit", id), _, _, _), _, _) =>
+        RewriteResponse("room" :: "edit" :: Nil, Map("id" -> id))
+    }
     /*
      * Show the spinny image when an Ajax call starts
      */
@@ -59,6 +68,17 @@ class Boot {
 
 }
 
+object MenuInfo {
+  import Loc._
+  val IfLoggedIn = If(() => User.currentUser.isDefined, "You must be logged in")
+
+  def menu: List[Menu] =
+    Menu(Loc("home", List("index"), "Home")) ::
+    Menu(Loc("room", List("room", "index"), "Room", IfLoggedIn)) ::
+    Menu(Loc("viewRoom", List("room") -> true, "Room", Hidden, IfLoggedIn)) ::
+    Menu(Loc("createRoom", List("room", "create"), "Create New Room", IfLoggedIn)) ::
+    User.sitemap
+}
 /**
 * Database connection calculation
 */
