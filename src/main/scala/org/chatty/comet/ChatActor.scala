@@ -40,7 +40,7 @@ class ChatActor extends CometActor {
   }
 
   def render = {
-    bind("message" -> <span></span>,
+    bind("message" -> <div></div>,
          "form"    -> form)
   }
 
@@ -55,17 +55,16 @@ class ChatActor extends CometActor {
   }
 
   def build(m: Message) = 
-    <li>
-      <span class="user">{ m.owner }</span>
-      <span class="message">{ m.message }</span>
-    </li>
+    <div class="message">
+      <div class="user">{ m.owner }</div>
+      <div class="text">{ m.message }</div>
+    </div>
 
   def appendMessages(messages: List[Message]) = 
     AppendHtml("log", messages.flatMap(build _))
 
   override def lowPriority : PartialFunction[Any, Unit] = {
     case UpdateMessage(m) => {
-      println(m.toString)
       messages = m
       partialUpdate(appendMessages(m))
     }

@@ -22,7 +22,7 @@ class Boot {
 
     // where to search snippet
     LiftRules.addToPackages("org.chatty")
-    Schemifier.schemify(true, Log.infoF _, User, Message)
+    Schemifier.schemify(true, Log.infoF _, User, Room, Member, Message)
 
     // Build SiteMap
     val entries = Menu(Loc("Home", List("index"), "Home")) :: 
