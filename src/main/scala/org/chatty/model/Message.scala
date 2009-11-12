@@ -39,4 +39,14 @@ object Message extends Message
 
   override def fieldOrder = 
     List(id, room, member, message, createdAt, updatedAt)
+
+  /**
+   * 新しいメッセージを投稿する。
+   * @param r 発言したチャットルーム
+   * @param m 発言したメンバー
+   * @param text 発言内容
+   * @return 新しいメッセージ
+   */
+  def post(r: Room, m: Member, text: String) = 
+    Message.create.room(r.id).member(m.id).message(text).saveMe
 }

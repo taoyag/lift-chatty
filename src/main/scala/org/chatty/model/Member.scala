@@ -37,8 +37,8 @@ object Member extends Member
    * チャットルームにユーザーを参加させる。
    * @param r チャットルーム
    * @param u 参加するユーザー
-   * @return 成功の場合はtrue
+   * @return 保存したMember
    */
   def join(r: Room, u: User) = 
-    this.create.room(r).user(u).save
+    this.create.room(r).user(u).saveMe
 }

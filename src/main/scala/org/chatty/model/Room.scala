@@ -19,7 +19,9 @@ class Room extends LongKeyedMapper[Room]
   }
 
   /** このチャットルームをメンバー以外に公開しないことを表すフラグ。*/
-  object memberOnly extends MappedBoolean(this)
+  object memberOnly extends MappedBoolean(this) {
+    override def defaultValue = false
+  }
 
   /**
    * このチャットルームの発言を新しいものからcountで指定された件数分返す。

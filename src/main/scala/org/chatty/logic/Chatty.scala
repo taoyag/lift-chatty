@@ -27,7 +27,8 @@ object Chatty extends Actor {
         case RemoveListener(l: Actor) =>
           listeners.excl(l)
         case AddMessage(user: User, m: String) =>
-          val message = Message.create.owner(user.id)
+//          val message = Message.create.owner(user.id)
+          val message = Message.create
           println("AddMessage" + message)
           message.message(m)
           notifyListeners(List(message))

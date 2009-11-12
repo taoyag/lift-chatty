@@ -56,7 +56,7 @@ class ChatActor extends CometActor {
 
   def build(m: Message) = 
     <div class="message">
-      <div class="user">{ m.owner }</div>
+      <div class="user">{ m.memberName }</div>
       <div class="text">{ m.message }</div>
     </div>
 
