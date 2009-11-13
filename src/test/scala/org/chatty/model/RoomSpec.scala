@@ -98,5 +98,23 @@ class RoomSpec extends FlatSpec with ShouldMatchers {
     m.owner(true).save
     r.owners should have size (1)
   }
+
+  it should ".findByUserでユーザーが所属するチャットルームを返す" in {
+    val n1 = "findByUser1"
+    val n2 = "findByUser2"
+    val r1 = Room.create.name(n1).saveMe
+    val r2 = Room.create.name(n2).saveMe
+    try {
+      Member.join(r1, user)
+      Member.join(r2, user)
+
+      val rooms = Room.findByUser(user.id)
+      rooms(0) should equal (r1)
+      rooms(1) should equal (r2)
+    } finally {
+      CleanUpper.cleanRoom(n1)
+      CleanUpper.cleanRoom(n2)
+    }
+  }
 }
 

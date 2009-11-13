@@ -1,5 +1,17 @@
 <lift:surround with="default" at="content">
-  <lift:roomSnippet.edit form="POST"/>
+  <lift:roomSnippet.edit form="POST"> 
+    <table>
+      <tr>
+        <td>Name</td>
+        <td><room:name/></td>
+      </tr>
+      <tr>
+        <td>Member Only</td>
+        <td><room:memberOnly/></td>
+      </tr>
+    </table>
+    <room:submit/>
+  </lift:roomSnippet.edit> 
 </lift:surround>
 
 

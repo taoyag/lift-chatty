@@ -1,6 +1,7 @@
 package org.chatty.snippet
 
 import net.liftweb.http._
+import net.liftweb.http.SHtml._
 import net.liftweb.util._
 import net.liftweb.util.Helpers._
 
@@ -42,7 +43,17 @@ class RoomSnippet {
   def edit(html: NodeSeq) = S.param("id") match {
     case Full(id) =>
       Room.findByKey(id.toLong).map({ r =>
-        r.toForm(Full("save"), "/room/")
+        def save(): Unit = User.currentUser match {
+          case Full(u) =>
+            doSave(u, r, false)
+          case _ =>
+            S.error("invalid user")
+        }
+
+        bind("room", html,
+            "name" -> r.name.toForm,
+            "memberOnly" -> r.memberOnly.toForm,
+            "submit" -> submit("Save", save))
       }) openOr Text("No room found")
     case _ =>
       Text("No room found")
@@ -52,10 +63,37 @@ class RoomSnippet {
    * 新しいチャットルームの入力フィールドを表示し、保存する。
    */
   def create(html: NodeSeq) = {
-    val room = new Room
-    room.toForm(Full("save"), { _.save })
+    val room = Room.create
+
+    def save(): Unit = User.currentUser match {
+      case Full(u) =>
+        doSave(u, room, true)
+      case _ =>
+        S.error("invalid user")
+    }
+
+    bind("room", html,
+      "name" -> room.name.toForm,
+      "memberOnly" -> room.memberOnly.toForm,
+      "submit" -> submit("Save", save))
   }
 
-  private def rooms = Room.findAll()
+  private def doSave(user: User, room: Room, create: Boolean) = {
+    room.validate match {
+      case Nil =>
+        room.save
+        if (create) Member.join(room, user).owner(true).save
+        S.redirectTo("/room/")
+      case e =>
+        S.error(e)
+    }
+  }
+
+  private def rooms = User.currentUser match {
+    case Full(u) =>
+      Room.findByUser(u.id)
+    case _ =>
+       Nil
+  }
 }
 

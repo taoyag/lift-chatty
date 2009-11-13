@@ -16,6 +16,7 @@ class Room extends LongKeyedMapper[Room]
   /** このチャットルームの名前。 */
   object name extends MappedString(this, 100) {
     override def dbIndexed_? = true
+    override def validations = valUnique("not a unique name") _ :: super.validations
   }
 
   /** このチャットルームをメンバー以外に公開しないことを表すフラグ。*/
@@ -52,10 +53,34 @@ object Room extends Room
   override def fieldOrder =
     List(id, name, createdAt, updatedAt)
 
+  val sqlFindByUser = 
+    """select distinct r.* from %s r 
+        join %s m on r.%s = m.%s
+        where m.%s = ?
+        order by r.%s""".format(
+          Room.dbTableName,
+          Member.dbTableName,
+          Room.id.dbColumnName,
+          Member.room.dbColumnName,
+          Member.user.dbColumnName,
+          Room.id.dbColumnName)
+
   /**
    * nameに一致するチャットルームを返す。
    * @param name チャットルームの名前
    * @return nameに一致するチャットルーム
    */
   def findByName(name: String) = find(By(Room.name, name))
+
+  /**
+   * ユーザーが所属するチャットルームを返す。
+   * @param userId 対象のユーザーID
+   * @return ユーザーが所属するチャットルーム
+   */
+  def findByUser(userId: Long) = 
+    findAllByPreparedStatement({ conn =>
+      val stmt = conn.connection.prepareStatement(sqlFindByUser)
+      stmt.setLong(1, userId)
+      stmt
+    })
 }
