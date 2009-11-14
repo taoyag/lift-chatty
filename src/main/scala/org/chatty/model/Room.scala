@@ -1,5 +1,7 @@
 package org.chatty.model
 
+import java.util.regex.Pattern._
+
 import net.liftweb.mapper._
 import net.liftweb.http._
 import net.liftweb.util._
@@ -16,7 +18,14 @@ class Room extends LongKeyedMapper[Room]
   /** このチャットルームの名前。 */
   object name extends MappedString(this, 100) {
     override def dbIndexed_? = true
-    override def validations = valUnique("not a unique name") _ :: super.validations
+    override def validations = 
+      valUnique("not a unique name") _ ::
+      valRegex(compile("""^[a-zA-Z0-9_]+$"""), "alphanumeric only") _ ::
+      super.validations
+  }
+
+  /** このチャットルームの説明。 */
+  object description extends MappedString(this, 1024) {
   }
 
   /** このチャットルームをメンバー以外に公開しないことを表すフラグ。*/

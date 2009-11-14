@@ -1,5 +1,7 @@
 package org.chatty.model
 
+import java.util.regex.Pattern._
+
 import net.liftweb.mapper._
 import net.liftweb.http._
 import net.liftweb.util._
@@ -24,7 +26,11 @@ class Message extends LongKeyedMapper[Message]
   }
 
   /** 発言内容。*/
-  object message extends MappedString(this, 1024)
+  object message extends MappedString(this, 1024) {
+    override def validations = 
+      valRegex(compile("""^.+$"""), "message is required") _ ::
+      super.validations
+  }
 
   /** 発言したメンバーの名前。*/
   lazy val memberName = member.obj.map(_.name) openOr "Unknown"
