@@ -12,11 +12,12 @@ import net.liftweb.util.Full
 import org.chatty.logic._
 import org.chatty.model._
 
-import scala.xml.NodeSeq
+import scala.xml.{NodeSeq, Text}
 
 class ChatActor extends CometActor {
   override def defaultPrefix = Full("chat")
   val input = "input"
+  var room: Room = _
   var messages: List[Message] = Nil
 
   def form = {
@@ -24,9 +25,9 @@ class ChatActor extends CometActor {
 
     def addMessage(m: String) = {
       if (m != "") {
-        Chatty ! AddMessage(user, m)
+        Chatty ! AddMessage(room, user, m)
+        //Chatty ! AddMessage(user, m)
 
-        //SetValById(input, JE.Str(""))
         SetValById(input, JE.Str("")) &
         JsCmds.Run("$('#%s').focus()".format(input))
       } else {
@@ -45,13 +46,21 @@ class ChatActor extends CometActor {
   }
 
   override def localSetup {
-    Chatty !? AddListener(this) match {
-      case UpdateMessage(m) => messages = m
+    S.param("roomId") match {
+      case Full(id) =>
+        Room.findByKey(id.toLong).map({ r =>
+          room = r
+          Chatty !? AddListener(room, this) match {
+            case UpdateMessage(m) => messages = m
+          }
+        }) openOr Text("No room found")
+      case _ =>
+        Text("Room is not defined")
     }
   }
 
   override def localShutdown {
-    Chatty ! RemoveListener(this)
+    Chatty ! RemoveListener(room, this)
   }
 
   def build(m: Message) = 

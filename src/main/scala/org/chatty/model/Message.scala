@@ -16,21 +16,20 @@ class Message extends LongKeyedMapper[Message]
   def getSingleton = Message
 
   /** この発言があったチャットルーム。*/
-  object room extends MappedLongForeignKey(this, Room) {
+  object room extends MappedLongForeignKey(this, Room) 
+    with ValidateRequired {
     override def dbIndexed_? = true
   }
 
   /** 発言したメンバー。*/
-  object member extends MappedLongForeignKey(this, Member) {
+  object member extends MappedLongForeignKey(this, Member) 
+    with ValidateRequired {
     override def dbIndexed_? = true
   }
 
   /** 発言内容。*/
-  object message extends MappedString(this, 1024) {
-    override def validations = 
-      valRegex(compile("""^.+$"""), "message is required") _ ::
-      super.validations
-  }
+  object message extends MappedString(this, 1024) 
+    with ValidateRequired
 
   /** 発言したメンバーの名前。*/
   lazy val memberName = member.obj.map(_.name) openOr "Unknown"

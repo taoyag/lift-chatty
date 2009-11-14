@@ -33,7 +33,10 @@ class RoomSnippet {
     case Full(id) =>
       Room.findByKey(id.toLong).map({ r =>
         bind("room", html, 
+            FuncAttrBindParam("chat_href", _ =>
+              Text("/chat/" + (r.primaryKeyField)), "href"),
             "name" -> r.name,
+            "description" -> r.description,
             "memberOnly" -> r.memberOnly)
       }) openOr Text("No room found")
     case _ =>
@@ -52,6 +55,7 @@ class RoomSnippet {
 
         bind("room", html,
             "name" -> r.name.toForm,
+            "description" -> r.description.toForm,
             "memberOnly" -> r.memberOnly.toForm,
             "submit" -> submit("Save", save))
       }) openOr Text("No room found")
@@ -74,6 +78,7 @@ class RoomSnippet {
 
     bind("room", html,
       "name" -> room.name.toForm,
+      "description" -> room.description.toForm,
       "memberOnly" -> room.memberOnly.toForm,
       "submit" -> submit("Save", save))
   }

@@ -39,6 +39,8 @@ class Boot {
         RewriteResponse("room" :: "view" :: Nil, Map("id" -> id))
       case RewriteRequest(ParsePath(List("room", "edit", id), _, _, _), _, _) =>
         RewriteResponse("room" :: "edit" :: Nil, Map("id" -> id))
+      case RewriteRequest(ParsePath(List("chat", id), _, _, _), _, _) =>
+        RewriteResponse("chat" :: Nil, Map("id" -> id))
     }
     /*
      * Show the spinny image when an Ajax call starts
@@ -77,6 +79,7 @@ object MenuInfo {
     Menu(Loc("room", List("room", "index"), "Room", IfLoggedIn)) ::
     Menu(Loc("viewRoom", List("room") -> true, "Room", Hidden, IfLoggedIn)) ::
     Menu(Loc("createRoom", List("room", "create"), "Create New Room", IfLoggedIn)) ::
+    Menu(Loc("chat", List("chat") -> true, "Chat", Hidden, IfLoggedIn)) ::
     User.sitemap
 }
 /**
