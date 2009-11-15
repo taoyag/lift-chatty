@@ -11,6 +11,7 @@ import net.liftweb.util.Full
 
 import org.chatty.logic._
 import org.chatty.model._
+import org.chatty.snippet._
 
 import scala.xml.{NodeSeq, Text}
 
@@ -21,11 +22,11 @@ class ChatActor extends CometActor {
   var messages: List[Message] = Nil
 
   def form = {
-    val user = User.currentUser.open_!
-
     def addMessage(m: String) = {
+      println(this)
       if (m != "") {
-        Chatty ! AddMessage(room, user, m)
+        println("addMessage:room="+room.id)
+        Chatty.chatty(room) ! AddMessage(User.currentUser.open_!, m)
         //Chatty ! AddMessage(user, m)
 
         SetValById(input, JE.Str("")) &
@@ -46,21 +47,36 @@ class ChatActor extends CometActor {
   }
 
   override def localSetup {
-    S.param("roomId") match {
+    /*
+    Room.findByKey(CurrentRoomId).map({ r =>
+      room = r
+      println("AddListener")
+      Chatty !? AddListener(room, User.currentUser.open_!, this) match {
+        case UpdateMessage(m) => appendMessages(m)
+      }
+    }) openOr Text("No room found")
+    */
+    /*
+    S.param("id") match {
       case Full(id) =>
+        println("roomId="+id)
         Room.findByKey(id.toLong).map({ r =>
           room = r
+          println("AddListener")
           Chatty !? AddListener(room, this) match {
             case UpdateMessage(m) => messages = m
           }
         }) openOr Text("No room found")
       case _ =>
+        println("Room is not defined")
         Text("Room is not defined")
     }
+    */
   }
 
   override def localShutdown {
-    Chatty ! RemoveListener(room, this)
+    println("localShutdown")
+    Chatty.chatty(room) ! RemoveListener(User.currentUser.open_!, this)
   }
 
   def build(m: Message) = 
@@ -73,9 +89,17 @@ class ChatActor extends CometActor {
     AppendHtml("log", messages.flatMap(build _))
 
   override def lowPriority : PartialFunction[Any, Unit] = {
-    case UpdateMessage(m) => {
-      messages = m
+    case UpdateMessage(m) =>
+      println("lowPriority:"+m)
       partialUpdate(appendMessages(m))
-    }
+
+    case CurrentRoomId(id) =>
+      Room.findByKey(id).map({ r =>
+        room = r
+        println("AddListener")
+        Chatty.chatty(room) !? AddListener(User.currentUser.open_!, this) match {
+          case UpdateMessage(m) => appendMessages(m)
+        }
+      }) openOr Text("No room found")
   }
 }
