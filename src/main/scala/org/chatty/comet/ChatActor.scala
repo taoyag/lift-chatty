@@ -27,7 +27,6 @@ class ChatActor extends CometActor {
       if (m != "") {
         println("addMessage:room="+room.id)
         Chatty.chatty(room) ! AddMessage(User.currentUser.open_!, m)
-        //Chatty ! AddMessage(user, m)
 
         SetValById(input, JE.Str("")) &
         JsCmds.Run("$('#%s').focus()".format(input))
@@ -47,31 +46,6 @@ class ChatActor extends CometActor {
   }
 
   override def localSetup {
-    /*
-    Room.findByKey(CurrentRoomId).map({ r =>
-      room = r
-      println("AddListener")
-      Chatty !? AddListener(room, User.currentUser.open_!, this) match {
-        case UpdateMessage(m) => appendMessages(m)
-      }
-    }) openOr Text("No room found")
-    */
-    /*
-    S.param("id") match {
-      case Full(id) =>
-        println("roomId="+id)
-        Room.findByKey(id.toLong).map({ r =>
-          room = r
-          println("AddListener")
-          Chatty !? AddListener(room, this) match {
-            case UpdateMessage(m) => messages = m
-          }
-        }) openOr Text("No room found")
-      case _ =>
-        println("Room is not defined")
-        Text("Room is not defined")
-    }
-    */
   }
 
   override def localShutdown {

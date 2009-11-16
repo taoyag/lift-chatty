@@ -61,15 +61,18 @@ object Room extends Room
     List(id, name, createdAt, updatedAt)
 
   val sqlFindByUser = 
-    """select distinct r.* from %s r 
-        join %s m on r.%s = m.%s
-        where m.%s = ?
-        order by r.%s""".format(
+    """|select distinct r.* from %s r 
+       |  left outer join %s m on r.%s = m.%s
+       |  where 
+       |       m.%s = ?
+       |    or r.%s = ?
+       |  order by r.%s""".stripMargin.format(
           Room.dbTableName,
           Member.dbTableName,
           Room.id.dbColumnName,
           Member.room.dbColumnName,
           Member.user.dbColumnName,
+          Room.memberOnly.dbColumnName,
           Room.id.dbColumnName)
 
   /**
@@ -80,14 +83,15 @@ object Room extends Room
   def findByName(name: String) = find(By(Room.name, name))
 
   /**
-   * ユーザーが所属するチャットルームを返す。
+   * ユーザーが閲覧可能なチャットルームを返す。
    * @param userId 対象のユーザーID
-   * @return ユーザーが所属するチャットルーム
+   * @return ユーザーが閲覧可能なチャットルーム
    */
   def findByUser(userId: Long) = 
     findAllByPreparedStatement({ conn =>
       val stmt = conn.connection.prepareStatement(sqlFindByUser)
       stmt.setLong(1, userId)
+      stmt.setBoolean(2, false)
       stmt
     })
 }

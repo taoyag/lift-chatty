@@ -29,12 +29,50 @@ class RoomSnippet {
     )
   }
 
+  def join(html: NodeSeq) = S.param("id") match {
+    case Full(id) =>
+      Room.findByKey(id.toLong).map({ r =>
+        def joinRoom(): Unit = {
+          Member.join(r, User.currentUser.open_!)
+          S.notice("Joined")
+        }
+        
+        bind("room", html,
+            "submit" -> 
+              {if (!isMember(r)) submit("Join this room", joinRoom) 
+              else NodeSeq.Empty})
+      }) openOr S.error("No room found")
+    case _ =>
+      S.error("No room found")
+  }
+
+  def isMember(r: Room) = {
+    Member.findByRoomAndUser(r.id, User.currentUser.open_!.id) match {
+      case Full(m) => true
+      case _ => false
+    }
+  }
+
   def view(html: NodeSeq) = S.param("id") match {
     case Full(id) =>
       Room.findByKey(id.toLong).map({ r =>
+        def chatting = {
+          FuncAttrBindParam(
+            "chat_href", _ =>
+            if (isMember(r)) Text("/chat/" + (r.primaryKeyField)) else Text(""), 
+            "href")
+        }
+
+        def chattingStyle = {
+          FuncAttrBindParam(
+            "chat_style", _ =>
+            if (isMember(r)) Text("display:inline") else Text("display:none"),
+            "style")
+        }
+
         bind("room", html, 
-            FuncAttrBindParam("chat_href", _ =>
-              Text("/chat/" + (r.primaryKeyField)), "href"),
+            chatting,
+            chattingStyle,
             "name" -> r.name,
             "description" -> r.description,
             "memberOnly" -> r.memberOnly)

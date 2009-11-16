@@ -12,7 +12,6 @@ import scala.xml.{NodeSeq, Text}
 class Chat {
   def roomName = S.param("id") match {
     case Full(id) =>
-      CurrentRoomId(id.toLong)
       Room.findByKey(id.toLong).map({ r =>
         Text(r.name)
       }) openOr Text("No room found")
@@ -28,9 +27,9 @@ class Chat {
     } session.setupComet("ChatActor", Full(name), CurrentRoomId(id.toLong))
 
     <lift:comet type="ChatActor" name={name}>
-      <ul id="log">
+      <div id="log">
         <chat:message>Loading...</chat:message>
-      </ul>
+      </div>
       <div id="form"><chat:form/></div>
     </lift:comet>
   }

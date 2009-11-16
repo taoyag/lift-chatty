@@ -1,9 +1,12 @@
 <lift:surround with="default" at="content">
+  <lift:roomSnippet.join form="POST">
+    <room:submit/>
+  </lift:roomSnippet.join>
   <lift:roomSnippet.view> 
     <table>
       <tr>
         <td></td>
-        <td><a room:chat_href="">Start Chatting</a></td>
+        <td><a room:chat_href="" room:chat_style="">Start Chatting</a></td>
       </tr>
       <tr>
         <td>Name</td>
