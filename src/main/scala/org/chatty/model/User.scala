@@ -16,6 +16,18 @@ object User extends User with MetaMegaProtoUser[User] {
 
   // comment this line out to require email validations
   override def skipEmailValidation = true
+
+  //TODO signup form
+  /*
+  override def signupFields: List[BaseOwnedMappedField[ModelType]] = 
+    firstName :: 
+    lastName :: 
+    email :: 
+    locale :: 
+    timezone :: 
+    password :: 
+    Nil
+  */
 }
 
 /**
