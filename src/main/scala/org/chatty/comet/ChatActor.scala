@@ -72,7 +72,7 @@ class ChatActor extends CometActor {
         room = r
         println("AddListener")
         Chatty.chatty(room) !? AddListener(User.currentUser.open_!, this) match {
-          case UpdateMessage(m) => appendMessages(m)
+          case UpdateMessage(m) => partialUpdate(appendMessages(m))
         }
       }) openOr Text("No room found")
   }

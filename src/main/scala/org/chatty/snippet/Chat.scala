@@ -27,7 +27,7 @@ class Chat {
     } session.setupComet("ChatActor", Full(name), CurrentRoomId(id.toLong))
 
     <lift:comet type="ChatActor" name={name}>
-      <div id="log">
+      <div id="messages">
         <chat:message>Loading...</chat:message>
       </div>
       <div id="form"><chat:form/></div>
