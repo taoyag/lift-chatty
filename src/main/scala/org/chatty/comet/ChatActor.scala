@@ -60,7 +60,7 @@ class ChatActor extends CometActor {
     </div>
 
   def appendMessages(messages: List[Message]) = 
-    AppendHtml("log", messages.flatMap(build _))
+    AppendHtml("messages", messages.flatMap(build _))
 
   override def lowPriority : PartialFunction[Any, Unit] = {
     case UpdateMessage(m) =>
