@@ -42,6 +42,7 @@ class Boot {
       case RewriteRequest(ParsePath(List("chat", id), _, _, _), _, _) =>
         RewriteResponse("chat" :: Nil, Map("id" -> id))
     }
+
     /*
      * Show the spinny image when an Ajax call starts
      */
